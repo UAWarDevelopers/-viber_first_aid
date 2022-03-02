@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches:
-      - heroku_deployment
+      - master
 
 jobs:
   build:
