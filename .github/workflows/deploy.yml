@@ -1,0 +1,17 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: "722c0b53-d255-431e-a970-42860b1a3f86"
+          heroku_app_name: "agile-brook-27432"
+          heroku_email: "prysiazhnyi.maxym@gmail.com"
