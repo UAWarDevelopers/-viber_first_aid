@@ -10,8 +10,7 @@ from viberbot.api.messages import TextMessage
 from viberbot.api.viber_requests import ViberMessageRequest, ViberConversationStartedRequest, ViberSubscribedRequest, \
     ViberFailedRequest
 
-from viber_bot.config import TOKEN
-from viber_bot.handlers import handle_message
+from handlers.handlers import handle_message
 
 app = Flask(__name__)
 viber = Api(BotConfiguration(

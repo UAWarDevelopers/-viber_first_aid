@@ -1,3 +1,0 @@
-viberbot
-flask
-python-dotenv
