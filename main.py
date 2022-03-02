@@ -1,3 +1,5 @@
+import os
+
 import json
 import logging
 
@@ -13,20 +15,17 @@ from viberbot.api.viber_requests import ViberMessageRequest, ViberConversationSt
 from handlers.handlers import handle_message
 
 app = Flask(__name__)
-viber = Api(BotConfiguration(
-    name='FirstAidDevBot',
-    avatar='',
-    auth_token=TOKEN
-))
 
-logging.basicConfig(format=u'%(filename)s [LINE:%(lineno)d] #%(levelname)-8s [%(asctime)s]  %(message)s',
-                    level=logging.INFO)
-logger = logging.getLogger()
+viber = Api(BotConfiguration(
+    name='FirstAidRobot',
+    avatar='http://site.com/avatar.jpg',
+    auth_token=os.environ["BOT_TOKEN"]
+))
 
 
 @app.route('/', methods=['POST'])
 def incoming():
-    logger.debug("received request. post data: {0}".format(request.get_data()))
+    logging.debug("received request. post data: {0}".format(request.get_data()))
     # every viber message is signed, you can verify the signature using this method
     if not viber.verify_signature(request.get_data(), request.headers.get('X-Viber-Content-Signature')):
         return Response(status=403)
@@ -38,10 +37,6 @@ def incoming():
         kb = json.load(json_file)
 
     if isinstance(viber_request, ViberMessageRequest):
-        # viber.send_messages(viber_request.sender.id, [
-        #     TextMessage(text="Що трапилось?",
-        #                 keyboard=kb["MainKeyboard"])
-        # ])
         handle_message(viber, viber_request)
     elif isinstance(viber_request, ViberConversationStartedRequest):
         viber.send_messages(viber_request.user.id, [
@@ -53,10 +48,10 @@ def incoming():
             TextMessage(text="Дякуємо за підписку!")
         ])
     elif isinstance(viber_request, ViberFailedRequest):
-        logger.warning("client failed receiving message. failure: {0}".format(viber_request))
+        logging.warning(
+            "client failed receiving message. failure: {0}".format(viber_request))
 
     return Response(status=200)
 
-
 if __name__ == "__main__":
-    app.run(port=8087, debug=True)
+    app.run(host='0.0.0.0', port=443, debug=True)
