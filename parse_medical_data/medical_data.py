@@ -168,7 +168,7 @@ class MedicalData:
         if option:
             self.__set_medical_data(option)
         else:
-            pass # Can add introduction 
+            self.init_begin_level()
 
         return self.__answer
 
@@ -180,6 +180,6 @@ class MedicalData:
         if option:
             self.__set_medical_data(option)
         else:
-            pass # Can add introduction 
+            self.init_begin_level()
 
         return self.__link
