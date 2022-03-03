@@ -57,9 +57,9 @@ def incoming():
 
         viber.send_messages(viber_request.sender.id,
                             messages=[TextMessage(text=bot_answer),
-                                      KeyboardMessage(
-                                          keyboard=KeyBoardContent(
-                                              options).get_json())])
+                                      KeyboardMessage(tracking_data="tracking_data",
+                                                      keyboard=KeyBoardContent(
+                                                          options).get_dict_repr())])
     elif isinstance(viber_request, ViberConversationStartedRequest):
         bot_answer = "Що трапилось?"
         options = medical_data.get_begin_options()
@@ -68,7 +68,7 @@ def incoming():
                             messages=[TextMessage(text=bot_answer),
                                       KeyboardMessage(
                                           keyboard=KeyBoardContent(
-                                              options).get_json())])
+                                              options).get_dict_repr())])
     elif isinstance(viber_request, ViberSubscribedRequest):
         viber.send_messages(viber_request.user.id, [
             TextMessage(text="Дякуємо за підписку!")

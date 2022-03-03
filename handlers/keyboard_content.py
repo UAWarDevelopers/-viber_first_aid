@@ -3,8 +3,8 @@ import json
 
 class KeyBoardContent:
     def __init__(self, options):
-        self.Type = 'keyboard'
-        self.Buttons = []
+        self.message_types = 'keyboard'
+        self.buttons = []
         self.__create_buttons(options)
 
     def __create_buttons(self, btn_options):
@@ -12,13 +12,11 @@ class KeyBoardContent:
         rows = 2
         for i in range(len(btn_options)):
             btn = Button(columns, rows, btn_options[i])
-            self.Buttons.append(btn)
+            self.buttons.append(btn)
 
-    def get_json(self):
-        return json.dumps(self, cls=ComplexEncoder)
-
-    def jsonable(self):
-        return self.__dict__
+    def get_dict_repr(self):
+        return {"Type": self.message_types,
+                "Buttons": [btn.get_dict_repr() for btn in self.buttons]}
 
 
 class Button:
@@ -29,15 +27,5 @@ class Button:
         self.ActionBody = text
         self.Text = text
 
-    def jsonable(self):
+    def get_dict_repr(self):
         return self.__dict__
-
-
-class ComplexEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if hasattr(obj, 'jsonable'):
-            return obj.jsonable()
-        else:
-            raise TypeError(
-                'Object of type %s with value of %s is not JSON serializable',
-                type(obj), repr(obj))
