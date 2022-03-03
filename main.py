@@ -41,7 +41,7 @@ def incoming():
     viber_request = viber.parse_request(request.get_data())
 
     if isinstance(viber_request, ViberMessageRequest):
-        selected_option = viber_request.message
+        selected_option = viber_request.message.text
 
         # for debug
         viber.send_messages(viber_request.sender.id,
