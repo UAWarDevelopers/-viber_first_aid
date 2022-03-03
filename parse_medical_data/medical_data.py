@@ -10,6 +10,7 @@ class MedicalData:
 
     LEVEL_SEPERATOR = "."
     LEVEL_BACK = " < "
+    START_LEVEL = "0"
 
     medicals_data = list()
 
@@ -27,9 +28,18 @@ class MedicalData:
         required_medical_data = None
 
         for medical_data in self.medicals_data:
-            if option == medical_data.__option:
+            is_start_hierarchy = self.__hierarchy == self.START_LEVEL
+            is_part_of_hierarchy_forward = self.__hierarchy in medical_data.__hierarchy
+            is_part_of_hierarchy_backward = medical_data.__hierarchy in self.__hierarchy
+
+            is_part_of_hierarchy = is_part_of_hierarchy_forward or is_part_of_hierarchy_backward
+
+            if option == medical_data.__option and (is_start_hierarchy or is_part_of_hierarchy):
                 required_medical_data = medical_data
                 break
+
+        else:
+            required_medical_data = self
 
         return required_medical_data
 
@@ -80,6 +90,14 @@ class MedicalData:
         """
         self.medicals_data.append(medical_data)
 
+    def init_begin_level(self) -> None:
+        """
+        """
+        self.__hierarchy = self.START_LEVEL
+        self.__option = None
+        self.__answer = None
+        self.__link = None
+
     def get_begin_options(self) -> List[str]:
         """
         """
@@ -93,22 +111,12 @@ class MedicalData:
 
         return begin_options
 
-    def get_answer(self) -> str:
-        """
-        """
-        #introduction text
-        return 
-
-    def get_link(self, option: str) -> str:
-        """
-        """
-        #introduction image link
-        return
-
-    def get_next_options(self, option: str) -> List[str]:
+    def get_options(self, option: str) -> List[str]:
         """
         """
         next_options = list()
+
+        self.__set_medical_data(option)
 
         next_level_regex = self.__get_next_level_regex(option)
 
@@ -145,8 +153,9 @@ class MedicalData:
         option = self.__get_back_option()
 
         if option:
-            back_options = self.get_next_options(option)
+            back_options = self.get_options(option)
         else:
+            self.init_begin_level()
             back_options = self.get_begin_options()
 
         return back_options
