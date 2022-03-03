@@ -42,22 +42,30 @@ def incoming():
     viber_request = viber.parse_request(request.get_data())
 
     if isinstance(viber_request, ViberMessageRequest):
-        reply = viber_request.message
-        options = medical_data.get_next_options(reply)
-        question = medical_data.get_answer(reply)
-        if reply == " < " or len(options) == 0:
+        selected_option = viber_request.message
+
+        if selected_option == " < ":
+            options = medical_data.get_back_options()
+            bot_answer = medical_data.get_back_answer()
+        else:
+            options = medical_data.get_options(selected_option)
+            bot_answer = medical_data.get_answer(selected_option)
+
+        if len(options) == 1:
             options = medical_data.get_begin_options()
-            question = "Що трапилось?"
+            bot_answer = "Що трапилось?"
+
         viber.send_messages(viber_request.sender.id,
-                            messages=[TextMessage(text=question),
+                            messages=[TextMessage(text=bot_answer),
                                       KeyboardMessage(
                                           keyboard=KeyBoardContent(
                                               options).get_json())])
     elif isinstance(viber_request, ViberConversationStartedRequest):
-        question = "Що трапилось?"
+        bot_answer = "Що трапилось?"
         options = medical_data.get_begin_options()
+
         viber.send_messages(viber_request.user.id,
-                            messages=[TextMessage(text=question),
+                            messages=[TextMessage(text=bot_answer),
                                       KeyboardMessage(
                                           keyboard=KeyBoardContent(
                                               options).get_json())])

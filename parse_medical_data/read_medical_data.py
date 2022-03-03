@@ -7,6 +7,7 @@ class ReadMedicalData:
     """
     """
 
+    START_LEVEL = "0"
     URL = "https://docs.google.com/spreadsheets/d/{0}/gviz/tq?tqx=out:csv&sheet={1}"
 
     def __init__(self) -> None:
@@ -43,4 +44,4 @@ class ReadMedicalData:
             medical_data = MedicalData(hierarchy, option, answer, link)
             medical_data.save_to_list(medical_data)
 
-        return medical_data
+        return MedicalData(self.START_LEVEL, None, None, None)
