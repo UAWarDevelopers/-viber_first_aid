@@ -3,8 +3,8 @@ from parse_medical_data.read_medical_data import ReadMedicalData
 def main():
     medical_data = ReadMedicalData().get_medical_data()
 
-    button = "Start"
-    #button = "Серцево-легенева реанімація"
+    # button = "Start"
+    button = "Серцево-легенева реанімація"
     #button = "Так"
     # button = "Дитина 1-8 років"
     #button = "Back"
@@ -20,6 +20,9 @@ def main():
         next_options = medical_data.get_next_options(button)
         answer = medical_data.get_answer(button)
         link = medical_data.get_link(button)
+        print(next_options)
+        print(answer)
+        print(link)
 
     break_point = 1
 
