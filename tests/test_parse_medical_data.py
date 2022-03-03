@@ -42,3 +42,9 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# is it all functions?
+# yes, all public
+# 
+
+# TODO: 1. get_next_element
