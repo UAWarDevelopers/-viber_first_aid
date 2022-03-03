@@ -54,8 +54,10 @@ def incoming():
             options = medical_data.get_options(selected_option)
             bot_answer = medical_data.get_answer(selected_option)
 
+        test = "".join(options)
+
         viber.send_messages(viber_request.sender.id,
-                            messages=[TextMessage(text=options)])
+                            messages=[TextMessage(text=test)])
 
         if len(options) == 1:
             options = medical_data.get_begin_options()
