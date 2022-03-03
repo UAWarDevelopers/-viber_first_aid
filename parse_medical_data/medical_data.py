@@ -95,7 +95,7 @@ class MedicalData:
         """
         self.__hierarchy = self.START_LEVEL
         self.__option = None
-        self.__answer = None
+        self.__answer = "Що трапилось?"
         self.__link = None
 
     def get_begin_options(self) -> List[str]:

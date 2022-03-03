@@ -28,6 +28,25 @@ viber = Api(BotConfiguration(
 medical_data = ReadMedicalData().get_medical_data()
 
 
+def send_text_message(viber_request, text):
+    viber.send_messages(
+        viber_request.sender.id,
+        messages=[TextMessage(text=text)]
+    )
+
+
+def update_buttons(viber_request, buttons):
+    viber.send_messages(
+        viber_request.sender.id,
+        messages=[
+            KeyboardMessage(
+                tracking_data="tracking_data",
+                keyboard=KeyBoardContent(buttons).get_dict_repr()
+            )
+        ]
+    )
+
+
 @app.route('/', methods=['POST'])
 def incoming():
     logging.debug("received request. post data: {0}".format(request.get_data()))
@@ -44,25 +63,30 @@ def incoming():
         selected_option = viber_request.message.text
 
         # for debug
-        viber.send_messages(viber_request.sender.id,
-                            messages=[TextMessage(text=selected_option)])
+        send_text_message(viber_request, selected_option)
 
         if selected_option == " < ":
             options = medical_data.get_back_options()
             bot_answer = medical_data.get_back_answer()
+
+            send_text_message(viber_request, bot_answer)
+            update_buttons(viber_request, options)
+
         else:
             options = medical_data.get_options(selected_option)
             bot_answer = medical_data.get_answer(selected_option)
 
+            send_text_message(viber_request, bot_answer)
+            update_buttons(viber_request, options)
+
         if len(options) == 1:
+            medical_data.init_begin_level()
             options = medical_data.get_begin_options()
             bot_answer = "Що трапилось?"
 
-        viber.send_messages(viber_request.sender.id,
-                            messages=[TextMessage(text=bot_answer),
-                                      KeyboardMessage(tracking_data="tracking_data",
-                                                      keyboard=KeyBoardContent(
-                                                          options).get_dict_repr())])
+            send_text_message(viber_request, bot_answer)
+            update_buttons(viber_request, options)
+
     elif isinstance(viber_request, ViberConversationStartedRequest):
         viber.send_messages(viber_request.user.id,
                             messages=[TextMessage(
