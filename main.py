@@ -79,7 +79,7 @@ def incoming():
             send_text_message(viber_request, bot_answer)
             update_buttons(viber_request, options)
 
-        if len(options) == 1:
+        if selected_option == "":
             medical_data.init_begin_level()
             options = medical_data.get_begin_options()
             bot_answer = "Що трапилось?"
@@ -88,15 +88,13 @@ def incoming():
             update_buttons(viber_request, options)
 
     elif isinstance(viber_request, ViberConversationStartedRequest):
-        viber.send_messages(viber_request.user.id,
-                            messages=[TextMessage(
-                                text="Відправте будь-яке повідомлення, "
-                                     "щоб почати спілкування")])
+        text = "Відправте будь-яке повідомлення, щоб почати спілкування"
+        send_text_message(viber_request, text)
 
     elif isinstance(viber_request, ViberSubscribedRequest):
-        viber.send_messages(viber_request.user.id, [
-            TextMessage(text="Дякуємо за підписку!")
-        ])
+        text = "Дякуємо за підписку!"
+        send_text_message(viber_request, text)
+
     elif isinstance(viber_request, ViberFailedRequest):
         logging.warning(
             "client failed receiving message. failure: {0}".format(viber_request))
