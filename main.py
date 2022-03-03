@@ -65,7 +65,15 @@ def incoming():
         # for debug
         send_text_message(viber_request, selected_option)
 
-        if selected_option == " < ":
+        if selected_option == "":
+            medical_data.init_begin_level()
+            options = medical_data.get_begin_options()
+            bot_answer = "Що трапилось?"
+
+            send_text_message(viber_request, bot_answer)
+            update_buttons(viber_request, options)
+
+        elif selected_option == " < ":
             options = medical_data.get_back_options()
             bot_answer = medical_data.get_back_answer()
 
@@ -75,14 +83,6 @@ def incoming():
         else:
             options = medical_data.get_options(selected_option)
             bot_answer = medical_data.get_answer(selected_option)
-
-            send_text_message(viber_request, bot_answer)
-            update_buttons(viber_request, options)
-
-        if selected_option == "":
-            medical_data.init_begin_level()
-            options = medical_data.get_begin_options()
-            bot_answer = "Що трапилось?"
 
             send_text_message(viber_request, bot_answer)
             update_buttons(viber_request, options)
