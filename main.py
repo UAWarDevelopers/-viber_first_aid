@@ -47,7 +47,7 @@ def incoming():
         viber.send_messages(viber_request.sender.id,
                             messages=[TextMessage(text=selected_option)])
 
-        if selected_option == "<":
+        if len(selected_option) == 1:
             options = medical_data.get_back_options()
             bot_answer = medical_data.get_back_answer()
         else:
