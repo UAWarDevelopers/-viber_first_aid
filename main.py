@@ -1,6 +1,5 @@
 import os
 
-import json
 import logging
 
 from flask import Flask
@@ -44,6 +43,10 @@ def incoming():
     if isinstance(viber_request, ViberMessageRequest):
         selected_option = viber_request.message
 
+        # for debug
+        viber.send_messages(viber_request.sender.id,
+                            messages=[TextMessage(text=selected_option)])
+
         if selected_option == " < ":
             options = medical_data.get_back_options()
             bot_answer = medical_data.get_back_answer()
@@ -61,14 +64,11 @@ def incoming():
                                                       keyboard=KeyBoardContent(
                                                           options).get_dict_repr())])
     elif isinstance(viber_request, ViberConversationStartedRequest):
-        bot_answer = "Що трапилось?"
-        options = medical_data.get_begin_options()
-
         viber.send_messages(viber_request.user.id,
-                            messages=[TextMessage(text=bot_answer),
-                                      KeyboardMessage(
-                                          keyboard=KeyBoardContent(
-                                              options).get_dict_repr())])
+                            messages=[TextMessage(
+                                text="Відправте будь-яке повідомлення, "
+                                     "щоб почати спілкування")])
+
     elif isinstance(viber_request, ViberSubscribedRequest):
         viber.send_messages(viber_request.user.id, [
             TextMessage(text="Дякуємо за підписку!")
