@@ -7,36 +7,45 @@ def main():
     medical_data.init_begin_level()
 
     # Функціонал кнопки
-    begin_options = medical_data.get_begin_options()
+    g1 = medical_data.get_begin_options_new()
     #begin_options містить кнопки першого рівня
 
     #Нажато трерю кнопку "Кровотеча"
-    third_button = begin_options[3]
+    button1 = g1[3]
 
     #Функціонал кнопки
-    options = medical_data.get_options(third_button)
-    # options містить кнопки рівня "Кровотеча"
-    answer = medical_data.get_answer(third_button)
-    link = medical_data.get_link(third_button)
+    medical_data.select_next_option(button1)
+    e1 = medical_data.get_next_options_new()
+    e2 = medical_data.get_answer_new()
+    e3 = medical_data.get_link_new()
 
     # Нажато кнопку "Так"
-    button = options[0]
+    button2 = e1[0]
 
     # Функціонал кнопки
-    options = medical_data.get_options(button)
-    # options містить кнопки рівня "Так"
-    answer = medical_data.get_answer(button)
-    link = medical_data.get_link(button)
+    medical_data.select_next_option(button2)
+    q1 = medical_data.get_next_options_new()
+    q2 = medical_data.get_answer_new()
+    q3 = medical_data.get_link_new()
+
+    button3 = q1[0]
+    medical_data.select_next_option(button3)
+    d1 = medical_data.get_next_options_new()
+    d2 = medical_data.get_answer_new()
+    d3 = medical_data.get_link_new()
 
     # Назад 1
-    back_options = medical_data.get_back_options()
-    back_answer = medical_data.get_back_answer()
-    back_link = medical_data.get_back_link()
+    medical_data.select_back_option()
+    a1 = medical_data.get_back_options_new()
+    a2 = medical_data.get_answer_new()
+    a3 = medical_data.get_link_new()
 
     # Назад 2
-    back_options = medical_data.get_back_options()
-    back_answer = medical_data.get_back_answer()
-    back_link = medical_data.get_back_link()
+    medical_data.select_back_option()
+    s1 = medical_data.get_back_options_new()
+    s2 = medical_data.get_answer_new()
+    s3 = medical_data.get_link_new()
+
 
     break_point = 1
 

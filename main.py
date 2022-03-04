@@ -74,15 +74,17 @@ def incoming():
             update_buttons(viber_request, options)
 
         elif selected_option == " < ":
+            medical_data.select_back_option()
             options = medical_data.get_back_options()
-            bot_answer = medical_data.get_back_answer()
+            bot_answer = medical_data.get_answer()
 
             send_text_message(viber_request, bot_answer)
             update_buttons(viber_request, options)
 
         else:
-            options = medical_data.get_options(selected_option)
-            bot_answer = medical_data.get_answer(selected_option)
+            medical_data.select_next_option(selected_option)
+            options = medical_data.get_next_options()
+            bot_answer = medical_data.get_answer()
 
             send_text_message(viber_request, bot_answer)
             update_buttons(viber_request, options)

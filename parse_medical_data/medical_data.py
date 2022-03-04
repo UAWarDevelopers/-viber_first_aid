@@ -22,73 +22,28 @@ class MedicalData:
         self.__answer = answer
         self.__link = link
 
-    def __get_medical_data(self, option: str) -> Optional[MedicalData]:
+    def __set_medical_data_new(self, hierarchy: str, option: str, answer: str, link: str) -> None:
         """
         """
-        required_medical_data = None
+        self.__hierarchy = hierarchy
+        self.__option = option
+        self.__answer = answer
+        self.__link = link
 
-        for medical_data in self.medicals_data:
-            is_start_hierarchy = self.__hierarchy == self.START_LEVEL
-            is_part_of_hierarchy_forward = self.__hierarchy in medical_data.__hierarchy
-            is_part_of_hierarchy_backward = medical_data.__hierarchy in self.__hierarchy
-
-            is_part_of_hierarchy = is_part_of_hierarchy_forward or is_part_of_hierarchy_backward
-
-            if option == medical_data.__option and (is_start_hierarchy or is_part_of_hierarchy):
-                required_medical_data = medical_data
-                break
-
-        else:
-            required_medical_data = self
-
-        return required_medical_data
-
-    def __set_medical_data(self, option: str) -> None:
+    def __get_next_level_regex_new(self) -> str:
         """
         """
-        medical_data = self.__get_medical_data(option)
-        self.__hierarchy = medical_data.__hierarchy
-        self.__option = medical_data.__option
-        self.__answer = medical_data.__answer
-        self.__link = medical_data.__link
-
-    def __get_next_level_regex(self, option: str) -> re.Pattern:
-        """
-        """
-        medical_data = self.__get_medical_data(option)
-
-        level = medical_data.__hierarchy
-        next_level_regex = rf"^{level}.\d+$"
+        next_level_regex = rf"^{self.__hierarchy}.\d+$"
 
         return next_level_regex
 
-    def __get_back_level(self) -> str:
+    def __get_back_level_new(self) -> str:
         """
         """
-        level = self.__hierarchy
-        previous_level_elements = level.split(self.LEVEL_SEPERATOR)[:-1]
+        previous_level_elements = self.__hierarchy.split(self.LEVEL_SEPERATOR)[:-1]
         back_level = self.LEVEL_SEPERATOR.join(previous_level_elements)
 
         return back_level
-
-    def __get_back_option(self) -> List[str]:
-        """
-        """
-        back_option = None
-
-        back_level = self.__get_back_level()
-
-        for medical_data in self.medicals_data:
-            if back_level == medical_data.__hierarchy:
-                back_option = medical_data.__option
-                break
-
-        return back_option
-
-    def save_to_list(self, medical_data: MedicalData) -> None:
-        """
-        """
-        self.medicals_data.append(medical_data)
 
     def init_begin_level(self) -> None:
         """
@@ -106,24 +61,32 @@ class MedicalData:
         for medical_data in self.medicals_data:
             if self.LEVEL_SEPERATOR not in medical_data.__hierarchy:
                 begin_option = medical_data.__option
-
                 begin_options.append(begin_option)
 
         return begin_options
 
-    def get_options(self, option: str) -> List[str]:
+    def select_next_option(self, option: str):
+        for medical_data in self.medicals_data:
+            is_part_of_hierarchy = self.__hierarchy == self.START_LEVEL or self.__hierarchy in medical_data.__hierarchy
+            is_same_option = option == medical_data.__option
+
+            if is_part_of_hierarchy and is_same_option:
+                self.__set_medical_data_new(
+                    medical_data.__hierarchy,
+                    medical_data.__option,
+                    medical_data.__answer,
+                    medical_data.__link
+                )
+
+    def get_next_options(self) -> List[str]:
         """
         """
         next_options = list()
 
-        self.__set_medical_data(option)
-
-        next_level_regex = self.__get_next_level_regex(option)
+        next_level_regex = self.__get_next_level_regex_new()
 
         for medical_data in self.medicals_data:
-            possible_level = medical_data.__hierarchy
-
-            if re.match(next_level_regex, possible_level):
+            if re.match(next_level_regex, medical_data.__hierarchy):
                 next_option = medical_data.__option
                 next_options.append(next_option)
 
@@ -131,55 +94,48 @@ class MedicalData:
 
         return next_options
 
-    def get_answer(self, option: str) -> str:
+    def select_back_option(self):
         """
-        """
-        self.__set_medical_data(option)
 
-        return self.__answer
-
-    def get_link(self, option: str) -> str:
         """
-        """
-        self.__set_medical_data(option)
+        back_level = self.__get_back_level_new()
 
-        return self.__link
+        for medical_data in self.medicals_data:
+            is_same_hierarchy = back_level == medical_data.__hierarchy
+
+            if is_same_hierarchy:
+                self.__set_medical_data_new(
+                    medical_data.__hierarchy,
+                    medical_data.__option,
+                    medical_data.__answer,
+                    medical_data.__link
+                )
+                break
+
+        else:
+            self.init_begin_level()
 
     def get_back_options(self) -> List[str]:
         """
         """
-        back_options = list()
-
-        option = self.__get_back_option()
-
-        if option:
-            back_options = self.get_options(option)
+        if self.__hierarchy is not self.START_LEVEL:
+            back_options = self.get_next_options_new()
         else:
-            self.init_begin_level()
-            back_options = self.get_begin_options()
+            back_options = self.get_begin_options_new()
 
         return back_options
 
-    def get_back_answer(self) -> str:
+    def get_answer(self) -> str:
         """
         """
-        option = self.__get_back_option()
-
-        if option:
-            self.__set_medical_data(option)
-        else:
-            self.init_begin_level()
-
         return self.__answer
 
-    def get_back_link(self) -> str:
+    def get_link(self) -> str:
         """
         """
-        option = self.__get_back_option()
-
-        if option:
-            self.__set_medical_data(option)
-        else:
-            self.init_begin_level()
-
         return self.__link
+
+    def save_to_list(self, medical_data: MedicalData) -> None:
+        """
+        """
+        self.medicals_data.append(medical_data)
