@@ -68,8 +68,6 @@ class MedicalData:
     def select_next_option(self, option: str):
         """
         """
-        is_part_of_hierarchy = False
-        is_same_option = False
         next_level_regex = self.__get_next_level_regex_new()
 
         for medical_data in self.medicals_data:
