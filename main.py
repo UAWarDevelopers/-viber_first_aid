@@ -103,7 +103,7 @@ def incoming():
 
             send_text_message(viber_request, answer)
             update_buttons(viber_request, next_options)
-            send_image(link, answer)
+            #send_image(link, answer)
 
     elif isinstance(viber_request, ViberConversationStartedRequest):
         text = "Відправте будь-яке повідомлення, щоб почати спілкування"
