@@ -119,9 +119,9 @@ class MedicalData:
         """
         """
         if self.__hierarchy is not self.START_LEVEL:
-            back_options = self.get_next_options_new()
+            back_options = self.get_next_options()
         else:
-            back_options = self.get_begin_options_new()
+            back_options = self.get_begin_options()
 
         return back_options
 
