@@ -66,8 +66,12 @@ class MedicalData:
         return begin_options
 
     def select_next_option(self, option: str):
+        """
+        """
+        next_level_regex = self.__get_next_level_regex_new()
+
         for medical_data in self.medicals_data:
-            is_part_of_hierarchy = self.__hierarchy in medical_data.__hierarchy or self.__hierarchy == self.START_LEVEL
+            is_part_of_hierarchy = re.match(next_level_regex, medical_data.__hierarchy) or self.__hierarchy == self.START_LEVEL
 
             is_same_option = option == medical_data.__option
 
