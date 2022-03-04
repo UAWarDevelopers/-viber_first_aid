@@ -7,7 +7,7 @@ from viberbot import Api
 from viberbot.api.bot_configuration import BotConfiguration
 
 from flask import request, Response
-from viberbot.api.messages import TextMessage, KeyboardMessage
+from viberbot.api.messages import TextMessage, KeyboardMessage, PictureMessage
 from viberbot.api.viber_requests import ViberMessageRequest, \
     ViberConversationStartedRequest, ViberSubscribedRequest, \
     ViberFailedRequest
@@ -45,6 +45,19 @@ def update_buttons(viber_request, buttons):
             )
         ]
     )
+
+
+def send_image(viber_request, url, text):
+    if url:
+        viber.send_messages(
+            viber_request.sender.id,
+            messages=[
+                PictureMessage(
+                    media=url,
+                    text=text
+                )
+            ]
+        )
 
 
 @app.route('/', methods=['POST'])
@@ -90,6 +103,7 @@ def incoming():
 
             send_text_message(viber_request, answer)
             update_buttons(viber_request, next_options)
+            send_image(link, answer)
 
     elif isinstance(viber_request, ViberConversationStartedRequest):
         text = "Відправте будь-яке повідомлення, щоб почати спілкування"
