@@ -119,10 +119,10 @@ class MedicalData:
     def get_back_options(self) -> List[str]:
         """
         """
-        if self.__hierarchy is not self.START_LEVEL:
-            back_options = self.get_next_options()
-        else:
+        if self.__hierarchy == self.START_LEVEL:
             back_options = self.get_begin_options()
+        else:
+            back_options = self.get_next_options()
 
         return back_options
 
