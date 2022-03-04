@@ -7,7 +7,7 @@ def main():
     medical_data.init_begin_level()
 
     # Функціонал кнопки
-    g1 = medical_data.get_begin_options_new()
+    g1 = medical_data.get_begin_options()
     #begin_options містить кнопки першого рівня
 
     #Нажато трерю кнопку "Кровотеча"
@@ -15,36 +15,36 @@ def main():
 
     #Функціонал кнопки
     medical_data.select_next_option(button1)
-    e1 = medical_data.get_next_options_new()
-    e2 = medical_data.get_answer_new()
-    e3 = medical_data.get_link_new()
+    e1 = medical_data.get_next_options()
+    e2 = medical_data.get_answer()
+    e3 = medical_data.get_link()
 
     # Нажато кнопку "Так"
     button2 = e1[0]
 
     # Функціонал кнопки
     medical_data.select_next_option(button2)
-    q1 = medical_data.get_next_options_new()
-    q2 = medical_data.get_answer_new()
-    q3 = medical_data.get_link_new()
+    q1 = medical_data.get_next_options()
+    q2 = medical_data.get_answer()
+    q3 = medical_data.get_link()
 
     button3 = q1[0]
     medical_data.select_next_option(button3)
-    d1 = medical_data.get_next_options_new()
-    d2 = medical_data.get_answer_new()
-    d3 = medical_data.get_link_new()
+    d1 = medical_data.get_next_options()
+    d2 = medical_data.get_answer()
+    d3 = medical_data.get_link()
 
     # Назад 1
     medical_data.select_back_option()
-    a1 = medical_data.get_back_options_new()
-    a2 = medical_data.get_answer_new()
-    a3 = medical_data.get_link_new()
+    a1 = medical_data.get_back_options()
+    a2 = medical_data.get_answer()
+    a3 = medical_data.get_link()
 
     # Назад 2
     medical_data.select_back_option()
-    s1 = medical_data.get_back_options_new()
-    s2 = medical_data.get_answer_new()
-    s3 = medical_data.get_link_new()
+    s1 = medical_data.get_back_options()
+    s2 = medical_data.get_answer()
+    s3 = medical_data.get_link()
 
 
     break_point = 1
