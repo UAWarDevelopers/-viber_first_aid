@@ -46,6 +46,16 @@ def main():
     s2 = medical_data.get_answer()
     s3 = medical_data.get_link()
 
+    medical_data.select_back_option()
+    s21 = medical_data.get_back_options()
+    s22 = medical_data.get_answer()
+    s23 = medical_data.get_link()
+
+    button23 = s21[0]
+    medical_data.select_next_option(button23)
+    d21 = medical_data.get_next_options()
+    d22 = medical_data.get_answer()
+    d23 = medical_data.get_link()
 
     break_point = 1
 

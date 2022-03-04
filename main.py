@@ -67,30 +67,29 @@ def incoming():
 
         if selected_option == "":
             medical_data.init_begin_level()
-            options = medical_data.get_begin_options()
-            bot_answer = "Що трапилось?"
+            begin_options = medical_data.get_begin_options()
+            answer = medical_data.get_answer()
 
-            send_text_message(viber_request, 1)
-            send_text_message(viber_request, bot_answer)
-            update_buttons(viber_request, options)
+            send_text_message(viber_request, answer)
+            update_buttons(viber_request, begin_options)
 
         elif selected_option == " < ":
             medical_data.select_back_option()
-            options = medical_data.get_back_options()
-            bot_answer = medical_data.get_answer()
+            back_options = medical_data.get_back_options()
+            answer = medical_data.get_answer()
+            link = medical_data.get_link()
 
-            send_text_message(viber_request, 2)
-            send_text_message(viber_request, bot_answer)
-            update_buttons(viber_request, options)
+            send_text_message(viber_request, answer)
+            update_buttons(viber_request, back_options)
 
         else:
             medical_data.select_next_option(selected_option)
-            options = medical_data.get_next_options()
-            bot_answer = medical_data.get_answer()
+            next_options = medical_data.get_next_options()
+            answer = medical_data.get_answer()
+            link = medical_data.get_link()
 
-            send_text_message(viber_request, 3)
-            send_text_message(viber_request, bot_answer)
-            update_buttons(viber_request, options)
+            send_text_message(viber_request, answer)
+            update_buttons(viber_request, next_options)
 
     elif isinstance(viber_request, ViberConversationStartedRequest):
         text = "Відправте будь-яке повідомлення, щоб почати спілкування"
