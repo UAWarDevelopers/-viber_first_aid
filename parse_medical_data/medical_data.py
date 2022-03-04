@@ -67,7 +67,8 @@ class MedicalData:
 
     def select_next_option(self, option: str):
         for medical_data in self.medicals_data:
-            is_part_of_hierarchy = self.__hierarchy == self.START_LEVEL or self.__hierarchy in medical_data.__hierarchy
+            is_part_of_hierarchy = self.__hierarchy in medical_data.__hierarchy or self.__hierarchy == self.START_LEVEL
+
             is_same_option = option == medical_data.__option
 
             if is_part_of_hierarchy and is_same_option:
