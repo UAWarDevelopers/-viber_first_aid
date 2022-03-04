@@ -70,6 +70,7 @@ def incoming():
             options = medical_data.get_begin_options()
             bot_answer = "Що трапилось?"
 
+            send_text_message(viber_request, 1)
             send_text_message(viber_request, bot_answer)
             update_buttons(viber_request, options)
 
@@ -78,6 +79,7 @@ def incoming():
             options = medical_data.get_back_options()
             bot_answer = medical_data.get_answer()
 
+            send_text_message(viber_request, 2)
             send_text_message(viber_request, bot_answer)
             update_buttons(viber_request, options)
 
@@ -86,6 +88,7 @@ def incoming():
             options = medical_data.get_next_options()
             bot_answer = medical_data.get_answer()
 
+            send_text_message(viber_request, 3)
             send_text_message(viber_request, bot_answer)
             update_buttons(viber_request, options)
 
