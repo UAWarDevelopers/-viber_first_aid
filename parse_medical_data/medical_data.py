@@ -30,14 +30,14 @@ class MedicalData:
         self.__answer = answer
         self.__link = link
 
-    def __get_next_level_regex_new(self) -> str:
+    def __get_next_level_regex(self) -> str:
         """
         """
         next_level_regex = rf"^{self.__hierarchy}.\d+$"
 
         return next_level_regex
 
-    def __get_back_level_new(self) -> str:
+    def __get_back_level(self) -> str:
         """
         """
         previous_level_elements = self.__hierarchy.split(self.LEVEL_SEPERATOR)[:-1]
@@ -68,7 +68,7 @@ class MedicalData:
     def select_next_option(self, option: str):
         """
         """
-        next_level_regex = self.__get_next_level_regex_new()
+        next_level_regex = self.__get_next_level_regex()
 
         for medical_data in self.medicals_data:
             is_part_of_hierarchy = re.match(next_level_regex, medical_data.__hierarchy) or self.__hierarchy == self.START_LEVEL
@@ -88,7 +88,7 @@ class MedicalData:
         """
         next_options = list()
 
-        next_level_regex = self.__get_next_level_regex_new()
+        next_level_regex = self.__get_next_level_regex()
 
         for medical_data in self.medicals_data:
             if re.match(next_level_regex, medical_data.__hierarchy):
@@ -101,13 +101,11 @@ class MedicalData:
 
     def select_back_option(self):
         """
-
         """
-        is_same_hierarchy = False
-        back_level = self.__get_back_level_new()
+        back_level = self.__get_back_level()
 
         for medical_data in self.medicals_data:
-            is_same_hierarchy = back_level == medical_data.__hierarchy
+            is_same_hierarchy = back_level == medical_data.__hierarchy and back_level in self.__hierarchy
 
             if is_same_hierarchy:
                 self.__set_medical_data_new(
