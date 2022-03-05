@@ -21,7 +21,7 @@ app = Flask(__name__)
 USE_LOCAL = False
 
 LOCAL_BOT_TOKEN = None
-LOCAL_PORT = 8080
+LOCAL_PORT = None
 
 if USE_LOCAL:
     LOCAL_BOT_TOKEN = "4ed5219398e7e547-135d020e66f16b38-bd60a24f2643f98b"
