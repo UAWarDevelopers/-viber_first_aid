@@ -3,6 +3,18 @@ from parse_medical_data.read_medical_data import ReadMedicalData
 def main():
     medical_data = ReadMedicalData().get_medical_data()
 
+    medical_data.init_begin_level()
+    option_by_hierarchy = medical_data.get_begin_options()
+    answer = medical_data.get_answer()
+    link = medical_data.get_link()
+
+    medical_data.set_id("1.1")
+    option_by_hierarchy = medical_data.get_next_options()
+    answer = medical_data.get_answer()
+    link = medical_data.get_link()
+
+
+    """
     #Нажато страт
     medical_data.init_begin_level()
 
@@ -56,8 +68,10 @@ def main():
     d21 = medical_data.get_next_options()
     d22 = medical_data.get_answer()
     d23 = medical_data.get_link()
+    """
 
     break_point = 1
+
 
 if __name__ == "__main__":
     main()

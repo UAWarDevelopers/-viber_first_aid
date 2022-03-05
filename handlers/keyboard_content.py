@@ -1,18 +1,22 @@
-import json
-
-
 class KeyBoardContent:
-    def __init__(self, options):
+    def __init__(self, options_by_hierarchy):
         self.message_types = 'keyboard'
         self.buttons = []
-        self.__create_buttons(options)
+        self.__create_buttons(options_by_hierarchy)
 
-    def __create_buttons(self, btn_options):
+    def __create_buttons(self, options_by_hierarchy):
+        options_by_hierarchy = dict(options_by_hierarchy)
+
         columns = 3
-        rows = 2
-        for i in range(len(btn_options)):
-            btn = Button(columns, rows, btn_options[i])
+        rows = 1
+        options_num = len(options_by_hierarchy)
+        for idx, (key, val) in enumerate(options_by_hierarchy.items()):
+            if idx == options_num - 1 and idx % 2 == 0:
+                columns = 6
+            btn = Button(columns, rows, text=val, action_body=key)
             self.buttons.append(btn)
+        self.buttons.append(
+            Button(columns=6, rows=1, text="Повернутися до меню", action_body="с"))
 
     def get_dict_repr(self):
         return {"Type": self.message_types,
@@ -20,11 +24,11 @@ class KeyBoardContent:
 
 
 class Button:
-    def __init__(self, columns, rows, text):
+    def __init__(self, columns, rows, text, action_body):
         self.Columns = columns
         self.Rows = rows
         self.ActionType = "reply"
-        self.ActionBody = text
+        self.ActionBody = action_body
         self.Text = text
 
     def get_dict_repr(self):

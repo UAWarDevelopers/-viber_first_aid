@@ -62,13 +62,13 @@ def send_text_message(user_id: str, text: str, buttons: list = None):
     )
 
 
-def update_buttons(user_id, buttons):
+def update_buttons(user_id, options_by_hierarchy):
     viber.send_messages(
         user_id,
         messages=[
             KeyboardMessage(
                 tracking_data="tracking_data",
-                keyboard=KeyBoardContent(buttons).get_dict_repr()
+                keyboard=KeyBoardContent(options_by_hierarchy).get_dict_repr()
             )
         ]
     )
@@ -106,26 +106,24 @@ def incoming():
         send_text_message(viber_request.user.id, answer, begin_options)
 
     elif isinstance(viber_request, ViberMessageRequest):
-        selected_option = viber_request.message.text
+        user_message = viber_request.message.text
 
         # for debug
         # send_text_message(viber_request.sender.id, format_message(selected_option))
 
-        if selected_option == " < ":
+        if user_message == " < ":
             medical_data.select_back_option()
-            back_options = medical_data.get_back_options()
+            options_by_hierarchy = medical_data.get_back_options()
             answer = medical_data.get_answer()
-            link = medical_data.get_link()
-
-            send_text_message(viber_request.sender.id, answer, buttons=back_options)
+            send_text_message(viber_request.sender.id, answer, buttons=options_by_hierarchy)
 
         else:
-            medical_data.select_next_option(selected_option)
-            next_options = medical_data.get_next_options()
+            medical_data.set_id(user_message)
+            options_by_hierarchy = medical_data.get_next_options()
             answer = medical_data.get_answer()
             link = medical_data.get_link()
 
-            send_text_message(viber_request.sender.id, answer, buttons=next_options)
+            send_text_message(viber_request.sender.id, answer, buttons=options_by_hierarchy)
             # send_image(viber_request.sender.id, link, answer)
 
     elif isinstance(viber_request, ViberSubscribedRequest):
