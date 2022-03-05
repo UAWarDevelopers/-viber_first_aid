@@ -103,7 +103,7 @@ def send_next_block(user_id, current_option_id):
 
     options_by_hierarchy = medical_data.get_options()
     answer = medical_data.get_answer()
-    link = medical_data.get_link()
+    #link = medical_data.get_link()
 
     if current_option_id != "0":
         options_by_hierarchy[current_option_id[:-2] if len(
