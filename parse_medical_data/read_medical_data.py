@@ -44,4 +44,4 @@ class ReadMedicalData:
             medical_data = MedicalData(hierarchy, option, answer, link)
             medical_data.save_to_list(medical_data)
 
-        return MedicalData(self.START_LEVEL, None, None, None)
+        return MedicalData(None, None, None, None)
