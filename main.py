@@ -33,29 +33,49 @@ viber = Api(BotConfiguration(
 medical_data = ReadMedicalData().get_medical_data()
 
 
-def send_text_message(user_id: str, text: str, buttons: dict = None):
+def send_messages_block(user_id: str, text: str, options_by_hierarchy: dict = None):
     """
-    Send text message to user
-    :param user_id: viber user id of receiver
+    Send text and keyboard to user
+    :param user_id: viber id of receiver
     :param text: message text
-    :param buttons: optional. if passed will also update keyboard
+    :param options_by_hierarchy: optional. if passed will also send keyboard
+    with specified options
     """
 
-    print(f"user_id: {user_id}, text: {text}")
+    print(f"user_id: {user_id}, text: {text[:10] if text is not None else None}, "
+          f"options: "
+          f"{list(options_by_hierarchy.items())[:min(3, len(options_by_hierarchy))] if options_by_hierarchy is not None else None}")
 
     messages_to_send = [TextMessage(text=text)]
 
-    if buttons:
+    if options_by_hierarchy:
         messages_to_send.append(
             KeyboardMessage(
                 tracking_data="tracking_data",
-                keyboard=KeyBoardContent(buttons).get_dict_repr()
+                keyboard=KeyBoardContent(options_by_hierarchy).get_dict_repr()
             )
         )
 
     viber.send_messages(
         to=user_id,
         messages=messages_to_send
+    )
+
+
+def send_text_message(user_id: str, text: str):
+    viber.send_messages(
+        to=user_id,
+        messages=[TextMessage(text=text)]
+    )
+
+
+def send_keyboard_message(user_id: str, options_by_hierarchy: dict):
+    viber.send_messages(
+        to=user_id,
+        messages=[KeyboardMessage(
+            tracking_data="tracking_data",
+            keyboard=KeyBoardContent(options_by_hierarchy).get_dict_repr()
+        )]
     )
 
 
@@ -72,6 +92,34 @@ def send_image(user_id, url, text):
         )
 
 
+def send_next_block(user_id, current_option_id):
+    """
+    Send next message and keyboard to user
+    :param user_id: viber receiver id
+    :param current_option_id: id of current option
+    :return: True if there is next options for user. False otherwise
+    """
+    medical_data.set_medical_data(current_option_id)
+
+    options_by_hierarchy = medical_data.get_options()
+    answer = medical_data.get_answer()
+    link = medical_data.get_link()
+
+    if len(options_by_hierarchy) == 0:
+        send_messages_block(user_id, answer)
+        return False
+
+    if current_option_id != "0":
+        options_by_hierarchy[current_option_id[:-2] if len(
+            current_option_id) > 1 else 0] = "Повернутися до попереднього"
+        options_by_hierarchy["0"] = "Повернутися до меню"
+
+    send_messages_block(user_id, answer,
+                        options_by_hierarchy)
+
+    return True
+
+
 @app.route('/', methods=['POST'])
 def incoming():
     logging.debug("received request. post data: {0}".format(request.get_data()))
@@ -85,36 +133,31 @@ def incoming():
     viber_request = viber.parse_request(request.get_data())
 
     if isinstance(viber_request, ViberConversationStartedRequest):
-        medical_data.init_begin_level()
-        begin_options = medical_data.get_begin_options()
-        answer = medical_data.get_answer()
-        send_text_message(viber_request.user.id, answer, begin_options)
+        welcome_text = "Щоб почати спілкування, надішліть \"Старт\""
+
+        send_text_message(viber_request.user.id, welcome_text)
 
     elif isinstance(viber_request, ViberMessageRequest):
         user_message = viber_request.message.text
-
-        # for debug
-        # send_text_message(viber_request.sender.id, format_message(selected_option))
+        user_id = viber_request.sender.id
 
         if user_message == "Старт":
-            medical_data.init_begin_level()
-            options_by_hierarchy = medical_data.get_begin_options()
-            answer = medical_data.get_answer()
+            user_message = "0"
 
-            send_text_message(viber_request.sender.id, answer, buttons=options_by_hierarchy)
+        if not medical_data.is_valid_hierarchy(user_message):
+            send_text_message(user_id, "Оберіть коректну опцію")
+            send_next_block(user_id, current_option_id="0")
 
-        else:
-            medical_data.set_id(user_message)
-            options_by_hierarchy = medical_data.get_next_options()
-            answer = medical_data.get_answer()
-            link = medical_data.get_link()
+            return Response(status=200)
 
-            send_text_message(viber_request.sender.id, answer, buttons=options_by_hierarchy)
-            # send_image(viber_request.sender.id, link, answer)
+        options_exist = send_next_block(user_id, user_message)
+        if not options_exist:
+            send_next_block(user_id, current_option_id="0")
 
     elif isinstance(viber_request, ViberSubscribedRequest):
-        text = "Дякуємо за підписку!"
-        send_text_message(viber_request.user.id, text)
+        subscribe_text = "Дякуємо за підписку!"
+
+        send_text_message(viber_request.user.id, subscribe_text)
 
     elif isinstance(viber_request, ViberFailedRequest):
         logging.warning(
