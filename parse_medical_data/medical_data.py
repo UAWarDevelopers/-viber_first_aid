@@ -61,6 +61,20 @@ class MedicalData:
 
         return option_by_hierarchy
 
+    def is_valid_hierarchy(self, hierarchy: str) -> bool:
+        """
+        """
+        is_valid_hierarchy = False
+
+        if hierarchy == self.START_LEVEL:
+            is_valid_hierarchy = True
+        else:
+            for medical_data in self.medicals_data:
+                if hierarchy == medical_data.__hierarchy:
+                    is_valid_hierarchy = True
+
+        return is_valid_hierarchy
+
     def set_medical_data(self, hierarchy: str) -> None:
         """
         """
