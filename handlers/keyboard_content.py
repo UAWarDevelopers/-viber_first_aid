@@ -16,7 +16,7 @@ class KeyBoardContent:
             btn = Button(columns, rows, text=val, action_body=key)
             self.buttons.append(btn)
         self.buttons.append(
-            Button(columns=6, rows=1, text="Повернутися до меню", action_body="с"))
+            Button(columns=6, rows=1, text="Повернутися до меню", action_body="Старт"))
 
     def get_dict_repr(self):
         return {"Type": self.message_types,
