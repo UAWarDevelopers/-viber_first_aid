@@ -12,7 +12,6 @@ from viberbot.api.viber_requests import ViberMessageRequest, \
     ViberConversationStartedRequest, ViberSubscribedRequest, \
     ViberFailedRequest
 
-from handlers.handlers import handle_message
 from handlers.keyboard_content import KeyBoardContent
 
 from parse_medical_data.read_medical_data import ReadMedicalData
@@ -45,13 +44,13 @@ def send_text_message(user_id, text):
     )
 
 
-def update_buttons(user_id, buttons):
+def update_buttons(user_id, options_by_hierarchy):
     viber.send_messages(
         user_id,
         messages=[
             KeyboardMessage(
                 tracking_data="tracking_data",
-                keyboard=KeyBoardContent(buttons).get_dict_repr()
+                keyboard=KeyBoardContent(options_by_hierarchy).get_dict_repr()
             )
         ]
     )
@@ -83,40 +82,28 @@ def incoming():
     viber_request = viber.parse_request(request.get_data())
 
     if isinstance(viber_request, ViberMessageRequest):
-        selected_option = viber_request.message.text
+        user_message = viber_request.message.text
+        print(f"user message: {user_message}")
 
-        # for debug
-        send_text_message(viber_request.sender.id, selected_option)
-
-        if selected_option == "":
+        if user_message == "с":
             medical_data.init_begin_level()
-            begin_options = medical_data.get_begin_options()
+            options_by_hierarchy = medical_data.get_begin_options()
             answer = medical_data.get_answer()
 
             send_text_message(viber_request.sender.id, answer)
-            update_buttons(viber_request.sender.id, begin_options)
-
-        elif selected_option == " < ":
-            medical_data.select_back_option()
-            back_options = medical_data.get_back_options()
-            answer = medical_data.get_answer()
-            link = medical_data.get_link()
-
-            send_text_message(viber_request.sender.id, answer)
-            update_buttons(viber_request.sender.id, back_options)
+            update_buttons(viber_request.sender.id, options_by_hierarchy)
 
         else:
-            medical_data.select_next_option(selected_option)
-            next_options = medical_data.get_next_options()
+            medical_data.set_id(user_message)
+            options_by_hierarchy = medical_data.get_next_options()
             answer = medical_data.get_answer()
             link = medical_data.get_link()
 
             send_text_message(viber_request.sender.id, answer)
-            update_buttons(viber_request.sender.id, next_options)
-            #send_image(link, answer)
+            update_buttons(viber_request.sender.id, options_by_hierarchy)
 
     elif isinstance(viber_request, ViberConversationStartedRequest):
-        text = "Відправте будь-яке повідомлення, щоб почати спілкування"
+        text = "Відправте 'с', щоб почати спілкування"
         send_text_message(viber_request.user.id, text)
 
     elif isinstance(viber_request, ViberSubscribedRequest):
