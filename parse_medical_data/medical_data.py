@@ -144,7 +144,10 @@ class MedicalData:
     def get_link(self) -> str:
         """
         """
-        return self.__link
+        link = re.sub(r".*file/d/", "", self.__link)
+        link = re.sub(r"/.*", "", link)
+        link = f"https://drive.google.com/uc?id={link}"
+        return link
 
     def save_to_list(self, medical_data: MedicalData) -> None:
         """
