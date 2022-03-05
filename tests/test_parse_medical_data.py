@@ -3,13 +3,13 @@ from parse_medical_data.read_medical_data import ReadMedicalData
 def main():
     medical_data = ReadMedicalData().get_medical_data()
 
-    medical_data.init_begin_level()
-    option_by_hierarchy = medical_data.get_begin_options()
+    medical_data.set_medical_data("0")
+    option_by_hierarchy = medical_data.get_options()
     answer = medical_data.get_answer()
     link = medical_data.get_link()
 
-    medical_data.set_id("1.1")
-    option_by_hierarchy = medical_data.get_next_options()
+    medical_data.set_medical_data("1.1")
+    option_by_hierarchy = medical_data.get_options()
     answer = medical_data.get_answer()
     link = medical_data.get_link()
 

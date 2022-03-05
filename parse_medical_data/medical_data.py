@@ -9,10 +9,7 @@ class MedicalData:
     """
 
     LEVEL_SEPERATOR = "."
-
-    """
     START_LEVEL = "0"
-    """
 
     medicals_data = list()
 
@@ -47,13 +44,13 @@ class MedicalData:
         return back_level
     """
 
-    def init_begin_level(self) -> None:
-        self.__hierarchy = None
+    def __init_begin_level(self) -> None:
+        self.__hierarchy = self.START_LEVEL
         self.__option = None
         self.__answer = "Що трапилось?"
         self.__link = None
 
-    def get_begin_options(self) -> Dict[str, str]:
+    def __get_begin_options(self) -> Dict[str, str]:
         """
         """
         option_by_hierarchy = dict()
@@ -64,28 +61,34 @@ class MedicalData:
 
         return option_by_hierarchy
 
-    def set_id(self, hierarchy: str) -> None:
+    def set_medical_data(self, hierarchy: str) -> None:
         """
         """
-        for medical_data in self.medicals_data:
-            if hierarchy == medical_data.__hierarchy:
-                self.__set_medical_data(
-                    medical_data.__hierarchy,
-                    medical_data.__option,
-                    medical_data.__answer,
-                    medical_data.__link
-                )
+        if hierarchy == self.START_LEVEL:
+            self.__init_begin_level()
+        else:
+            for medical_data in self.medicals_data:
+                if hierarchy == medical_data.__hierarchy:
+                    self.__set_medical_data(
+                        medical_data.__hierarchy,
+                        medical_data.__option,
+                        medical_data.__answer,
+                        medical_data.__link
+                    )
 
-    def get_next_options(self) -> Dict[str, str]:
+    def get_options(self) -> Dict[str, str]:
         """
         """
         option_by_hierarchy = dict()
 
-        next_level_regex = self.__get_next_level_regex()
+        if self.__hierarchy == self.START_LEVEL:
+            option_by_hierarchy = self.__get_begin_options()
+        else:
+            next_level_regex = self.__get_next_level_regex()
 
-        for medical_data in self.medicals_data:
-            if re.match(next_level_regex, medical_data.__hierarchy):
-                option_by_hierarchy[medical_data.__hierarchy] = medical_data.__option
+            for medical_data in self.medicals_data:
+                if re.match(next_level_regex, medical_data.__hierarchy):
+                    option_by_hierarchy[medical_data.__hierarchy] = medical_data.__option
 
         return option_by_hierarchy
 
