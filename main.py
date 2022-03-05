@@ -1,20 +1,17 @@
+import logging
 import os
 
-import logging
-
 from flask import Flask
+from flask import request, Response
 from viberbot import Api
 from viberbot.api.bot_configuration import BotConfiguration
-
-from flask import request, Response
 from viberbot.api.messages import TextMessage, KeyboardMessage, PictureMessage
 from viberbot.api.viber_requests import ViberMessageRequest, \
     ViberConversationStartedRequest, ViberSubscribedRequest, \
     ViberFailedRequest
 
-from handlers.keyboard_content import KeyBoardContent
-
 from parse_medical_data.read_medical_data import ReadMedicalData
+from utils.keyboard_content import KeyBoardContent
 
 app = Flask(__name__)
 
@@ -62,18 +59,6 @@ def send_text_message(user_id: str, text: str, buttons: dict = None):
     )
 
 
-def update_buttons(user_id, options_by_hierarchy):
-    viber.send_messages(
-        user_id,
-        messages=[
-            KeyboardMessage(
-                tracking_data="tracking_data",
-                keyboard=KeyBoardContent(options_by_hierarchy).get_dict_repr()
-            )
-        ]
-    )
-
-
 def send_image(user_id, url, text):
     if url:
         viber.send_messages(
@@ -96,7 +81,7 @@ def incoming():
                                   request.headers.get('X-Viber-Content-Signature')):
         return Response(status=403)
 
-    # this handlers supplies a simple way to receive a request object
+    # this utils supplies a simple way to receive a request object
     viber_request = viber.parse_request(request.get_data())
 
     if isinstance(viber_request, ViberConversationStartedRequest):
