@@ -36,7 +36,7 @@ viber = Api(BotConfiguration(
 medical_data = ReadMedicalData().get_medical_data()
 
 
-def send_text_message(user_id: str, text: str, buttons: list = None):
+def send_text_message(user_id: str, text: str, buttons: dict = None):
     """
     Send text message to user
     :param user_id: viber user id of receiver
@@ -111,10 +111,11 @@ def incoming():
         # for debug
         # send_text_message(viber_request.sender.id, format_message(selected_option))
 
-        if user_message == " < ":
-            medical_data.select_back_option()
-            options_by_hierarchy = medical_data.get_back_options()
+        if user_message == "Старт":
+            medical_data.init_begin_level()
+            options_by_hierarchy = medical_data.get_begin_options()
             answer = medical_data.get_answer()
+
             send_text_message(viber_request.sender.id, answer, buttons=options_by_hierarchy)
 
         else:
