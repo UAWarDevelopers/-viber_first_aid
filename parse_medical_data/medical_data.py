@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+import requests
 from typing import Dict
 
 
@@ -144,10 +145,14 @@ class MedicalData:
     def get_link(self) -> str:
         """
         """
-        link = re.sub(r".*file/d/", "", self.__link)
-        link = re.sub(r"/.*", "", link)
-        link = f"https://drive.google.com/uc?id={link}"
-        return self.__link
+        link = None
+
+        id_regex = r".*file\/d\/(\d.*)?\/view.*"
+        if isinstance(self.__link, str):
+            link_id = re.match(id_regex, self.__link).group(1)
+            link = f"https://drive.google.com/uc?id={link_id}"
+
+        return link
 
     def save_to_list(self, medical_data: MedicalData) -> None:
         """
