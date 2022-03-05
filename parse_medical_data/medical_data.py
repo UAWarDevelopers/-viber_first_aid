@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from typing import List, Optional
+from typing import Dict
 
 
 class MedicalData:
@@ -9,8 +9,10 @@ class MedicalData:
     """
 
     LEVEL_SEPERATOR = "."
-    LEVEL_BACK = " < "
+
+    """
     START_LEVEL = "0"
+    """
 
     medicals_data = list()
 
@@ -22,7 +24,7 @@ class MedicalData:
         self.__answer = answer
         self.__link = link
 
-    def __set_medical_data_new(self, hierarchy: str, option: str, answer: str, link: str) -> None:
+    def __set_medical_data(self, hierarchy: str, option: str, answer: str, link: str) -> None:
         """
         """
         self.__hierarchy = hierarchy
@@ -37,71 +39,58 @@ class MedicalData:
 
         return next_level_regex
 
+    """
     def __get_back_level(self) -> str:
-        """
-        """
         previous_level_elements = self.__hierarchy.split(self.LEVEL_SEPERATOR)[:-1]
         back_level = self.LEVEL_SEPERATOR.join(previous_level_elements)
 
         return back_level
+    """
 
     def init_begin_level(self) -> None:
-        """
-        """
-        self.__hierarchy = self.START_LEVEL
+        self.__hierarchy = None
         self.__option = None
         self.__answer = "Що трапилось?"
         self.__link = None
 
-    def get_begin_options(self) -> List[str]:
+    def get_begin_options(self) -> Dict[str, str]:
         """
         """
-        begin_options = list()
+        option_by_hierarchy = dict()
 
         for medical_data in self.medicals_data:
             if self.LEVEL_SEPERATOR not in medical_data.__hierarchy:
-                begin_option = medical_data.__option
-                begin_options.append(begin_option)
+                option_by_hierarchy[medical_data.__hierarchy] = medical_data.__option
 
-        return begin_options
+        return option_by_hierarchy
 
-    def select_next_option(self, option: str):
+    def set_id(self, hierarchy: str) -> None:
         """
         """
-        next_level_regex = self.__get_next_level_regex()
-
         for medical_data in self.medicals_data:
-            is_part_of_hierarchy = re.match(next_level_regex, medical_data.__hierarchy) or self.__hierarchy == self.START_LEVEL
-
-            is_same_option = option == medical_data.__option
-
-            if is_part_of_hierarchy and is_same_option:
-                self.__set_medical_data_new(
+            if hierarchy == medical_data.__hierarchy:
+                self.__set_medical_data(
                     medical_data.__hierarchy,
                     medical_data.__option,
                     medical_data.__answer,
                     medical_data.__link
                 )
 
-    def get_next_options(self) -> List[str]:
+    def get_next_options(self) -> Dict[str, str]:
         """
         """
-        next_options = list()
+        option_by_hierarchy = dict()
 
         next_level_regex = self.__get_next_level_regex()
 
         for medical_data in self.medicals_data:
             if re.match(next_level_regex, medical_data.__hierarchy):
-                next_option = medical_data.__option
-                next_options.append(next_option)
+                option_by_hierarchy[medical_data.__hierarchy] = medical_data.__option
 
-        next_options.append(self.LEVEL_BACK)
+        return option_by_hierarchy
 
-        return next_options
-
+    """
     def select_back_option(self):
-        """
-        """
         back_level = self.__get_back_level()
 
         for medical_data in self.medicals_data:
@@ -118,16 +107,17 @@ class MedicalData:
 
         else:
             self.init_begin_level()
+    """
 
+    """
     def get_back_options(self) -> List[str]:
-        """
-        """
         if self.__hierarchy == self.START_LEVEL:
             back_options = self.get_begin_options()
         else:
             back_options = self.get_next_options()
 
         return back_options
+    """
 
     def get_answer(self) -> str:
         """
