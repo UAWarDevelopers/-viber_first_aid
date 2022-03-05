@@ -105,10 +105,6 @@ def send_next_block(user_id, current_option_id):
     answer = medical_data.get_answer()
     link = medical_data.get_link()
 
-    if len(options_by_hierarchy) == 0:
-        send_messages_block(user_id, answer)
-        return False
-
     if current_option_id != "0":
         options_by_hierarchy[current_option_id[:-2] if len(
             current_option_id) > 1 else 0] = "Повернутися до попереднього"
@@ -116,8 +112,6 @@ def send_next_block(user_id, current_option_id):
 
     send_messages_block(user_id, answer,
                         options_by_hierarchy)
-
-    return True
 
 
 @app.route('/', methods=['POST'])
@@ -146,13 +140,12 @@ def incoming():
 
         if not medical_data.is_valid_hierarchy(user_message):
             send_text_message(user_id, "Оберіть коректну опцію")
+
             send_next_block(user_id, current_option_id="0")
 
             return Response(status=200)
 
-        options_exist = send_next_block(user_id, user_message)
-        if not options_exist:
-            send_next_block(user_id, current_option_id="0")
+        send_next_block(user_id, user_message)
 
     elif isinstance(viber_request, ViberSubscribedRequest):
         subscribe_text = "Дякуємо за підписку!"
