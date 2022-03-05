@@ -36,11 +36,29 @@ viber = Api(BotConfiguration(
 medical_data = ReadMedicalData().get_medical_data()
 
 
-def send_text_message(user_id, text):
+def send_text_message(user_id: str, text: str, buttons: dict = None):
+    """
+    Send text message to user
+    :param user_id: viber user id of receiver
+    :param text: message text
+    :param buttons: optional. if passed will also update keyboard
+    """
+
     print(f"user_id: {user_id}, text: {text}")
+
+    messages_to_send = [TextMessage(text=text)]
+
+    if buttons:
+        messages_to_send.append(
+            KeyboardMessage(
+                tracking_data="tracking_data",
+                keyboard=KeyBoardContent(buttons).get_dict_repr()
+            )
+        )
+
     viber.send_messages(
-        user_id,
-        messages=[TextMessage(text=text)]
+        to=user_id,
+        messages=messages_to_send
     )
 
 
@@ -78,20 +96,27 @@ def incoming():
                                   request.headers.get('X-Viber-Content-Signature')):
         return Response(status=403)
 
-    # this library supplies a simple way to receive a request object
+    # this handlers supplies a simple way to receive a request object
     viber_request = viber.parse_request(request.get_data())
 
-    if isinstance(viber_request, ViberMessageRequest):
-        user_message = viber_request.message.text
-        print(f"user message: {user_message}")
+    if isinstance(viber_request, ViberConversationStartedRequest):
+        medical_data.init_begin_level()
+        begin_options = medical_data.get_begin_options()
+        answer = medical_data.get_answer()
+        send_text_message(viber_request.user.id, answer, begin_options)
 
-        if user_message == "с":
+    elif isinstance(viber_request, ViberMessageRequest):
+        user_message = viber_request.message.text
+
+        # for debug
+        # send_text_message(viber_request.sender.id, format_message(selected_option))
+
+        if user_message == "Старт":
             medical_data.init_begin_level()
             options_by_hierarchy = medical_data.get_begin_options()
             answer = medical_data.get_answer()
 
-            send_text_message(viber_request.sender.id, answer)
-            update_buttons(viber_request.sender.id, options_by_hierarchy)
+            send_text_message(viber_request.sender.id, answer, buttons=options_by_hierarchy)
 
         else:
             medical_data.set_id(user_message)
@@ -99,12 +124,8 @@ def incoming():
             answer = medical_data.get_answer()
             link = medical_data.get_link()
 
-            send_text_message(viber_request.sender.id, answer)
-            update_buttons(viber_request.sender.id, options_by_hierarchy)
-
-    elif isinstance(viber_request, ViberConversationStartedRequest):
-        text = "Відправте 'с', щоб почати спілкування"
-        send_text_message(viber_request.user.id, text)
+            send_text_message(viber_request.sender.id, answer, buttons=options_by_hierarchy)
+            # send_image(viber_request.sender.id, link, answer)
 
     elif isinstance(viber_request, ViberSubscribedRequest):
         text = "Дякуємо за підписку!"
