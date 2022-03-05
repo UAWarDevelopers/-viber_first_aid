@@ -151,9 +151,6 @@ class MedicalData:
         if isinstance(self.__link, str):
             link_id = re.match(id_regex, self.__link).group(1)
             link = f"https://drive.google.com/uc?id={link_id}"
-            response = requests.get(self.__link)
-            if response.status_code == 200:
-                a = 1
 
         return self.__link
 

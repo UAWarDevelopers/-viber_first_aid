@@ -110,7 +110,7 @@ def send_next_block(user_id, current_option_id):
             current_option_id) > 1 else 0] = "Повернутися до попереднього"
         options_by_hierarchy["0"] = "Повернутися до меню"
 
-    send_image(user_id, link, "")
+    #send_image(user_id, link, "")
     send_messages_block(user_id, answer,
                         options_by_hierarchy)
 
