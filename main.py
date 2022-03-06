@@ -12,10 +12,12 @@ from viberbot.api.viber_requests import ViberMessageRequest, \
 
 from parse_medical_data.read_medical_data import ReadMedicalData
 from utils.keyboard_content import KeyBoardContent
+from utils import text_utils
+from utils import image_utils
 
 app = Flask(__name__)
 
-USE_LOCAL = False
+USE_LOCAL = True
 
 LOCAL_BOT_TOKEN = None
 LOCAL_PORT = None
@@ -33,36 +35,32 @@ viber = Api(BotConfiguration(
 medical_data = ReadMedicalData().get_medical_data()
 
 
-def send_messages_block(user_id: str, text: str, options_by_hierarchy: dict = None):
+def send_messages_block(user_id: str, text: str, options_by_hierarchy: dict = None,
+                        img_url: str = None):
     """
     Send text and keyboard to user
     :param user_id: viber id of receiver
     :param text: message text
     :param options_by_hierarchy: optional. if passed will also send keyboard
     with specified options
+    :param img_url: optional. if passed will also send image
     """
 
     print(f"user_id: {user_id}, text: {text[:10] if text is not None else None}, "
           f"options: "
           f"{list(options_by_hierarchy.items())[:min(3, len(options_by_hierarchy))] if options_by_hierarchy is not None else None}")
 
-    messages_to_send = [TextMessage(text=text)]
+    send_text_message(user_id, text)
 
     if options_by_hierarchy:
-        messages_to_send.append(
-            KeyboardMessage(
-                tracking_data="tracking_data",
-                keyboard=KeyBoardContent(options_by_hierarchy).get_dict_repr()
-            )
-        )
+        send_keyboard_message(user_id, options_by_hierarchy)
 
-    viber.send_messages(
-        to=user_id,
-        messages=messages_to_send
-    )
+    if img_url:
+        send_image_message(user_id, img_url, "")
 
 
 def send_text_message(user_id: str, text: str):
+    text = text_utils.format_message(text)
     viber.send_messages(
         to=user_id,
         messages=[TextMessage(text=text)]
@@ -79,7 +77,14 @@ def send_keyboard_message(user_id: str, options_by_hierarchy: dict):
     )
 
 
-def send_image(user_id, url, text):
+# TODO: 1. get link from google 2. upload to img hosting through: request or API
+# https://drive.google.com/uc?id=1kSC0XqxuOtKqcRJpSv5DAOF_sixE8yx0
+# inspected: https://freeimage.host/page/api
+# works only with .jpg or base64
+# 1. right from google -> get base64
+# 2. from google api
+# 3. request -> binary -> base64
+def send_image_message(user_id, url, text):
     if url:
         viber.send_messages(
             user_id,
@@ -103,17 +108,18 @@ def send_next_block(user_id, current_option_id):
 
     options_by_hierarchy = medical_data.get_options()
     answer = medical_data.get_answer()
-    link = medical_data.get_link()
+    google_img_url = medical_data.get_link()
+    print(google_img_url)
+    img_url = image_utils.get_jpg_url(
+        google_img_url) if google_img_url is not None else None
 
     if current_option_id != "0":
         options_by_hierarchy[current_option_id[:-2] if len(
             current_option_id) > 1 else 0] = "Повернутися до попереднього"
         options_by_hierarchy["0"] = "Повернутися до меню"
 
-    #send_image(user_id, link, "")
     send_messages_block(user_id, answer,
-                        options_by_hierarchy)
-
+                        options_by_hierarchy, img_url)
 
 
 @app.route('/', methods=['POST'])
@@ -139,6 +145,7 @@ def incoming():
 
         if user_message == "Старт":
             user_message = "0"
+            # send_image("Q7zm/8cd4QoOdFpU8K0D+w==", "https://iili.io/EAIftI.jpg", "viber")
 
         if not medical_data.is_valid_hierarchy(user_message):
             send_text_message(user_id, "Оберіть коректну опцію")
