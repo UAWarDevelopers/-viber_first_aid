@@ -6,7 +6,7 @@ from viberbot.api.bot_configuration import BotConfiguration
 # Viber Bot API requires execution of a single command to set endpoint
 # for forwarding messages sent to bot
 
-USE_LOCAL = True
+USE_LOCAL = False
 
 LOCAL_ENDPOINT = None
 LOCAL_BOT_TOKEN = None

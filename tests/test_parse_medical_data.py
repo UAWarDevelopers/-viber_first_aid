@@ -1,4 +1,4 @@
-from parse_medical_data.read_medical_data import ReadMedicalData
+from medical_data.read_medical_data import ReadMedicalData
 
 def main():
     medical_data = ReadMedicalData().get_medical_data()

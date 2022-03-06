@@ -1,6 +1,6 @@
 import pandas as pd
 
-from parse_medical_data.medical_data import MedicalData
+from medical_data.medical_data import MedicalData
 
 
 class ReadMedicalData:

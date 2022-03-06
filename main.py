@@ -10,14 +10,14 @@ from viberbot.api.viber_requests import ViberMessageRequest, \
     ViberConversationStartedRequest, ViberSubscribedRequest, \
     ViberFailedRequest
 
-from parse_medical_data.read_medical_data import ReadMedicalData
+from medical_data.read_medical_data import ReadMedicalData
 from utils.keyboard_content import KeyBoardContent
 from utils import text_utils
 from utils import image_utils
 
 app = Flask(__name__)
 
-USE_LOCAL = True
+USE_LOCAL = False
 
 LOCAL_BOT_TOKEN = None
 LOCAL_PORT = None
@@ -52,11 +52,11 @@ def send_messages_block(user_id: str, text: str, options_by_hierarchy: dict = No
 
     send_text_message(user_id, text)
 
-    if options_by_hierarchy:
-        send_keyboard_message(user_id, options_by_hierarchy)
-
     if img_url:
         send_image_message(user_id, img_url, "")
+
+    if options_by_hierarchy:
+        send_keyboard_message(user_id, options_by_hierarchy)
 
 
 def send_text_message(user_id: str, text: str):
@@ -77,13 +77,6 @@ def send_keyboard_message(user_id: str, options_by_hierarchy: dict):
     )
 
 
-# TODO: 1. get link from google 2. upload to img hosting through: request or API
-# https://drive.google.com/uc?id=1kSC0XqxuOtKqcRJpSv5DAOF_sixE8yx0
-# inspected: https://freeimage.host/page/api
-# works only with .jpg or base64
-# 1. right from google -> get base64
-# 2. from google api
-# 3. request -> binary -> base64
 def send_image_message(user_id, url, text):
     if url:
         viber.send_messages(
@@ -109,7 +102,6 @@ def send_next_block(user_id, current_option_id):
     options_by_hierarchy = medical_data.get_options()
     answer = medical_data.get_answer()
     google_img_url = medical_data.get_link()
-    print(google_img_url)
     img_url = image_utils.get_jpg_url(
         google_img_url) if google_img_url is not None else None
 
@@ -145,7 +137,6 @@ def incoming():
 
         if user_message == "Старт":
             user_message = "0"
-            # send_image("Q7zm/8cd4QoOdFpU8K0D+w==", "https://iili.io/EAIftI.jpg", "viber")
 
         if not medical_data.is_valid_hierarchy(user_message):
             send_text_message(user_id, "Оберіть коректну опцію")
