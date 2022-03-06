@@ -147,12 +147,10 @@ class MedicalData:
         """
         link = None
 
-        id_regex = r".*file\/d\/(\d.*)?\/view.*"
         if isinstance(self.__link, str):
-            link_id = re.match(id_regex, self.__link).group(1)
-            link = f"https://drive.google.com/uc?id={link_id}"
+            link = self.__link
 
-        return self.__link
+        return link
 
     def save_to_list(self, medical_data: MedicalData) -> None:
         """
