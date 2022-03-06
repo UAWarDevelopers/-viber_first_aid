@@ -144,7 +144,11 @@ class MedicalData:
     def get_link(self) -> str:
         """
         """
-        return self.__link
+        link = None
+        if isinstance(self.__link, str):
+            link = self.__link
+
+        return link
 
     def save_to_list(self, medical_data: MedicalData) -> None:
         """

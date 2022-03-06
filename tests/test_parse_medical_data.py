@@ -8,7 +8,7 @@ def main():
     answer = medical_data.get_answer()
     link = medical_data.get_link()
 
-    medical_data.set_medical_data("1.1")
+    medical_data.set_medical_data("1.1.1")
     option_by_hierarchy = medical_data.get_options()
     answer = medical_data.get_answer()
     link = medical_data.get_link()
