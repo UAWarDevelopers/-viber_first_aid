@@ -1,4 +1,4 @@
-USE_LOCAL = True
+USE_LOCAL = False
 
 LOCAL_ENDPOINT = None
 LOCAL_BOT_TOKEN = None
